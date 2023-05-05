@@ -1,0 +1,334 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    05/02/2023  23:06:56  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj, .\Objects\STARTUP.obj, .\Objects\L298N.obj, .\Objects\TCRT5000.obj TO .\
+>> Objects\TrackingCar PRINT (.\Listings\TrackingCar.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\L298N.obj (L298N)
+  .\Objects\TCRT5000.obj (TCRT5000)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?UIDIV)
+
+
+LINK MAP OF MODULE:  .\Objects\TrackingCar (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0003H     UNIT         _DATA_GROUP_
+            DATA    000BH     0001H     UNIT         ?DT?TCRT5000
+            IDATA   000CH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008FH     UNIT         ?PR?MAIN?MAIN
+            CODE    088FH     006FH     UNIT         ?PR?GET_ACTION?TCRT5000
+            CODE    08FEH     0055H     UNIT         ?C?LIB_CODE
+            CODE    0953H     0027H     UNIT         ?PR?_LEFT_SIDE?L298N
+            CODE    097AH     0027H     UNIT         ?PR?_RIGHT_SIDE?L298N
+            CODE    09A1H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\TrackingCar (MAIN)
+
+
+SEGMENT                           DATA_GROUP 
+  +--> CALLED SEGMENT           START    LENGTH
+-----------------------------------------------
+?C_C51STARTUP                   -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                   0008H    0003H
+  +--> ?PR?GET_ACTION?TCRT5000
+  +--> ?PR?_RIGHT_SIDE?L298N
+  +--> ?PR?_LEFT_SIDE?L298N
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\TrackingCar (MAIN)
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2023  23:06:56  PAGE 2
+
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00E8H         PUBLIC        P4
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0800H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        real_action
+  D:0009H         SYMBOL        real_pwm
+  -------         ENDDO         
+  C:0800H         LINE#         8
+  C:0800H         LINE#         9
+  C:0800H         LINE#         13
+  C:0805H         LINE#         16
+  C:0805H         LINE#         17
+  C:0805H         LINE#         18
+  C:080AH         LINE#         20
+  C:081EH         LINE#         22
+  C:0822H         LINE#         23
+  C:0822H         LINE#         25
+  C:082DH         LINE#         26
+  C:082DH         LINE#         27
+  C:0832H         LINE#         28
+  C:0834H         LINE#         29
+  C:0836H         LINE#         31
+  C:0836H         LINE#         32
+  C:083BH         LINE#         33
+  C:0840H         LINE#         34
+  C:0840H         LINE#         35
+  C:0842H         LINE#         36
+  C:0842H         LINE#         38
+  C:0848H         LINE#         39
+  C:0848H         LINE#         40
+  C:0853H         LINE#         41
+  C:0853H         LINE#         42
+  C:0858H         LINE#         43
+  C:085AH         LINE#         44
+  C:085CH         LINE#         46
+  C:085CH         LINE#         47
+  C:0861H         LINE#         48
+  C:0863H         LINE#         49
+  C:0863H         LINE#         50
+  C:0865H         LINE#         51
+  C:0865H         LINE#         60
+  C:086BH         LINE#         61
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2023  23:06:56  PAGE 3
+
+
+  C:086BH         LINE#         62
+  C:0876H         LINE#         63
+  C:0876H         LINE#         64
+  C:087BH         LINE#         65
+  C:0880H         LINE#         66
+  C:0882H         LINE#         68
+  C:0882H         LINE#         69
+  C:0887H         LINE#         70
+  C:088CH         LINE#         71
+  C:088CH         LINE#         72
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        ?C_STARTUP
+  C:09A1H         SEGMENT       ?C_C51STARTUP
+  I:000CH         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:09A4H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:09A1H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:09A1H         LINE#         133
+  C:09A3H         LINE#         134
+  C:09A4H         LINE#         135
+  C:09A5H         LINE#         136
+  C:09A7H         LINE#         185
+  C:09AAH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        L298N
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00E8H         PUBLIC        P4
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:097AH         PUBLIC        _right_side
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2023  23:06:56  PAGE 4
+
+
+  B:00A0H.0       PUBLIC        P20
+  B:00A0H.1       PUBLIC        P21
+  D:0098H         PUBLIC        SCON
+  B:00A0H.2       PUBLIC        P22
+  C:0953H         PUBLIC        _left_side
+  D:0088H         PUBLIC        TCON
+  B:00A0H.3       PUBLIC        P23
+  B:00A0H.4       PUBLIC        P24
+  B:00A0H.5       PUBLIC        P25
+  B:00A0H.6       PUBLIC        P26
+  B:00A0H.7       PUBLIC        P27
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _LEFT_SIDE
+  D:0007H         SYMBOL        isback
+  C:0953H         LINE#         6
+  C:0953H         LINE#         7
+  C:0953H         LINE#         8
+  C:0959H         LINE#         9
+  C:0959H         LINE#         12
+  C:095BH         LINE#         13
+  C:095DH         LINE#         15
+  C:095FH         LINE#         16
+  C:0962H         LINE#         18
+  C:0962H         LINE#         19
+  C:0968H         LINE#         20
+  C:0968H         LINE#         23
+  C:096AH         LINE#         24
+  C:096CH         LINE#         26
+  C:096EH         LINE#         27
+  C:0971H         LINE#         29
+  C:0971H         LINE#         32
+  C:0973H         LINE#         33
+  C:0975H         LINE#         35
+  C:0977H         LINE#         36
+  C:0979H         LINE#         37
+  -------         ENDPROC       _LEFT_SIDE
+  -------         PROC          _RIGHT_SIDE
+  D:0007H         SYMBOL        isback
+  C:097AH         LINE#         39
+  C:097AH         LINE#         40
+  C:097AH         LINE#         41
+  C:0980H         LINE#         42
+  C:0980H         LINE#         45
+  C:0982H         LINE#         46
+  C:0984H         LINE#         48
+  C:0986H         LINE#         49
+  C:0989H         LINE#         51
+  C:0989H         LINE#         52
+  C:098FH         LINE#         53
+  C:098FH         LINE#         56
+  C:0991H         LINE#         57
+  C:0993H         LINE#         59
+  C:0995H         LINE#         60
+  C:0998H         LINE#         62
+  C:0998H         LINE#         65
+  C:099AH         LINE#         66
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2023  23:06:56  PAGE 5
+
+
+  C:099CH         LINE#         68
+  C:099EH         LINE#         69
+  C:09A0H         LINE#         70
+  -------         ENDPROC       _RIGHT_SIDE
+  -------         ENDMOD        L298N
+
+  -------         MODULE        TCRT5000
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00E8H         PUBLIC        P4
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:088FH         PUBLIC        get_action
+  B:0090H.2       PUBLIC        P12
+  D:0098H         PUBLIC        SCON
+  B:0090H.3       PUBLIC        P13
+  D:0088H         PUBLIC        TCON
+  B:0090H.4       PUBLIC        P14
+  B:0090H.5       PUBLIC        P15
+  B:0090H.6       PUBLIC        P16
+  B:0090H.7       PUBLIC        P17
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          GET_ACTION
+  -------         DO            
+  D:000BH         SYMBOL        backup_action
+  D:0007H         SYMBOL        sum
+  -------         ENDDO         
+  C:088FH         LINE#         5
+  C:088FH         LINE#         6
+  C:088FH         LINE#         8
+  C:08B1H         LINE#         15
+  C:08C1H         LINE#         16
+  C:08C1H         LINE#         17
+  C:08C4H         LINE#         18
+  C:08C4H         LINE#         20
+  C:08CFH         LINE#         21
+  C:08CFH         LINE#         22
+  C:08D2H         LINE#         23
+  C:08D2H         LINE#         25
+  C:08D5H         LINE#         26
+  C:08D5H         LINE#         27
+  C:08D5H         LINE#         28
+  C:08D7H         LINE#         29
+  C:08D7H         LINE#         31
+  C:08DAH         LINE#         32
+  C:08DAH         LINE#         33
+  C:08DDH         LINE#         34
+  C:08DFH         LINE#         35
+  C:08DFH         LINE#         37
+  C:08E2H         LINE#         38
+  C:08E2H         LINE#         39
+  C:08E2H         LINE#         40
+  C:08E4H         LINE#         41
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2023  23:06:56  PAGE 6
+
+
+  C:08E4H         LINE#         43
+  C:08E7H         LINE#         44
+  C:08E7H         LINE#         45
+  C:08EAH         LINE#         46
+  C:08EDH         LINE#         47
+  C:08EDH         LINE#         49
+  C:08F0H         LINE#         50
+  C:08F0H         LINE#         51
+  C:08F0H         LINE#         52
+  C:08F2H         LINE#         53
+  C:08F2H         LINE#         55
+  C:08F5H         LINE#         56
+  C:08F5H         LINE#         57
+  C:08F8H         LINE#         58
+  C:08FBH         LINE#         59
+  C:08FBH         LINE#         61
+  C:08FDH         LINE#         62
+  -------         ENDPROC       GET_ACTION
+  -------         ENDMOD        TCRT5000
+
+  -------         MODULE        ?C?UIDIV
+  C:08FEH         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 015BH BYTE (16%) *
+******************************************************************************
+
+Program Size: data=13.0 xdata=0 code=432
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,98 @@
+C51 COMPILER V9.60.0.0   L298N                                                             05/02/2023 23:06:56 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE L298N
+OBJECT MODULE PLACED IN .\Objects\L298N.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE L298N.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\L29
+                    -8N.lst) OBJECT(.\Objects\L298N.obj)
+
+line level    source
+
+*** WARNING C500 IN LINE 1 OF L298N.c: LICENSE ERROR (R207(3): REGISTRY READ ERROR)
+
+   1          #include <STC89C5xRC.H>
+   2          #include "L298N.h"
+   3          
+   4          // AC反转，BD正转
+   5          
+   6          void left_side(unsigned char isback)
+   7          {
+   8   1              if(isback == 0)
+   9   1              {
+  10   2                      // 反
+  11   2                      // @brief 左前轮转向控制位
+  12   2                      UPPER_LEFT_A = 1;
+  13   2                      UPPER_LEFT_B = 0;
+  14   2                      // @brief 左后轮转向控制位
+  15   2                      LOWER_LEFT_A = 1;
+  16   2                      LOWER_LEFT_B = 0;
+  17   2                      return;
+  18   2              }
+  19   1              else if(isback == 1)
+  20   1              {
+  21   2                      // 正
+  22   2                      // @brief 左前轮转向控制位
+  23   2                      UPPER_LEFT_A = 0;
+  24   2                      UPPER_LEFT_B = 1;
+  25   2                      // @brief 左后轮转向控制位
+  26   2                      LOWER_LEFT_A = 0;
+  27   2                      LOWER_LEFT_B = 1;
+  28   2                      return;
+  29   2              }
+  30   1              // stop
+  31   1              // @brief 左前轮转向控制位
+  32   1              UPPER_LEFT_A = 0;
+  33   1              UPPER_LEFT_B = 0;
+  34   1              // @brief 左后轮转向控制位
+  35   1              LOWER_LEFT_A = 0;
+  36   1              LOWER_LEFT_B = 0;
+  37   1      }
+  38          
+  39          void right_side(unsigned char isback)
+  40          {
+  41   1              if(isback == 0)
+  42   1              {
+  43   2                      // 反
+  44   2                      // @brief 左前轮转向控制位
+  45   2                      UPPER_RIGHT_A = 1;
+  46   2                      UPPER_RIGHT_B = 0;
+  47   2                      // @brief 左后轮转向控制位
+  48   2                      LOWER_RIGHT_A = 1;
+  49   2                      LOWER_RIGHT_B = 0;
+  50   2                      return;
+  51   2              }
+  52   1              else if(isback == 1)
+  53   1              {
+C51 COMPILER V9.60.0.0   L298N                                                             05/02/2023 23:06:56 PAGE 2   
+
+  54   2                      // 正
+  55   2                      // @brief 左前轮转向控制位
+  56   2                      UPPER_RIGHT_A = 0;
+  57   2                      UPPER_RIGHT_B = 1;
+  58   2                      // @brief 左后轮转向控制位
+  59   2                      LOWER_RIGHT_A = 0;
+  60   2                      LOWER_RIGHT_B = 1;
+  61   2                      return;
+  62   2              }
+  63   1              // stop
+  64   1              // @brief 左前轮转向控制位
+  65   1              UPPER_RIGHT_A = 0;
+  66   1              UPPER_RIGHT_B = 0;
+  67   1              // @brief 左后轮转向控制位
+  68   1              LOWER_RIGHT_A = 0;
+  69   1              LOWER_RIGHT_B = 0;
+  70   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     78    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
