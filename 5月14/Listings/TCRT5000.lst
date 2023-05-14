@@ -1,0 +1,90 @@
+C51 COMPILER V9.60.0.0   TCRT5000                                                          05/14/2023 22:21:52 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TCRT5000
+OBJECT MODULE PLACED IN .\Objects\TCRT5000.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE TCRT5000.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -TCRT5000.lst) OBJECT(.\Objects\TCRT5000.obj)
+
+line level    source
+
+*** WARNING C500 IN LINE 1 OF TCRT5000.c: LICENSE ERROR (R207(3): REGISTRY READ ERROR)
+
+   1          #include <STC89C5xRC.H>
+   2          
+   3          #include "TCRT5000.H"
+   4          
+   5          ACTION_t get_action()
+   6          {
+   7   1              static ACTION_t backup_action;
+   8   1              char sum = (unsigned char)D0 +\
+   9   1                      (unsigned char)D1 +\
+  10   1                              (unsigned char)D2 +\
+  11   1                                      (unsigned char)D3 +\
+  12   1                                              (unsigned char)D4 +\
+  13   1                                                      (unsigned char)D5;
+  14   1      
+  15   1              if (sum < 1) // 全部悬空时，返回上一个状态
+  16   1              {
+  17   2                      return backup_action;
+  18   2              }
+  19   1      
+  20   1              if (sum > 2) // 大于两传感器
+  21   1              {
+  22   2                      return X;
+  23   2              }
+  24   1      
+  25   1              if (D0 == 1) // 左1压，右2空
+  26   1              {
+  27   2                      backup_action = TURN_LEFT;
+  28   2                      return TURN_LEFT;
+  29   2              }
+  30   1      
+  31   1              if (D1 == 1) // 左2压，右2空
+  32   1              {
+  33   2                      backup_action = TURN_LEFT;
+  34   2                      return TURN_LEFT;
+  35   2              }
+  36   1      
+  37   1              if (D2 == 1)
+  38   1              {
+  39   2                      backup_action = TURN_LEFT_SMALL;
+  40   2                      return TURN_LEFT_SMALL;
+  41   2              }
+  42   1              
+  43   1              if (D3 == 1)
+  44   1              {
+  45   2                      backup_action = TURN_RIGHT_SMALL;
+  46   2                      return TURN_RIGHT_SMALL;
+  47   2              }
+  48   1      
+  49   1              if (D4 == 1) // 右2压，左2空
+  50   1              {
+  51   2                      backup_action = TURN_RIGHT;
+  52   2                      return TURN_RIGHT;
+  53   2              }
+C51 COMPILER V9.60.0.0   TCRT5000                                                          05/14/2023 22:21:52 PAGE 2   
+
+  54   1      
+  55   1              if (D5 == 1) // 右1压，左2空
+  56   1              {
+  57   2                      backup_action = TURN_RIGHT;
+  58   2                      return TURN_RIGHT;
+  59   2              }
+  60   1      
+  61   1              return backup_action;
+  62   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    115    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

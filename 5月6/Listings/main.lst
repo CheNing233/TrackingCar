@@ -1,0 +1,318 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              05/14/2023 21:08:25 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+*** WARNING C500 IN LINE 1 OF main.c: LICENSE ERROR (R207(3): REGISTRY READ ERROR)
+
+   1          #include <STC89C5xRC.H>
+   2          
+   3          #include "TCRT5000.h"
+   4          #include "L298N.h"
+   5          
+   6          /*
+   7                  global vars
+   8          */
+   9          
+  10          #define INIT 0
+  11          #define GO 1
+  12          #define STOP_W5S 2
+  13          #define GO_2 3
+  14          #define SLOW 4
+  15          #define GO_3 5
+  16          #define STOP 6
+  17          
+  18          unsigned int real_pwm = 0;
+  19          unsigned int real_wtime = 0;
+  20          unsigned char channel_sum = 0;
+  21          unsigned char stage = 0;
+  22          
+  23          unsigned char D0_r = 0;
+  24          unsigned char D1_r = 0;
+  25          unsigned char D2_r = 0;
+  26          unsigned char D3_r = 0;
+  27          unsigned char D4_r = 0;
+  28          unsigned char D5_r = 0;
+  29          
+  30          void Timer0Init(void) // 1us@12.000MHz
+  31          {
+  32   1              AUXR &= 0x7F; // 定时器时钟12T模式
+  33   1              TMOD &= 0xF0; // 设置定时器模式
+  34   1      
+  35   1              TL0 = 0xFF; // 设置定时初始值
+  36   1              TH0 = 0xFF; // 设置定时初始值
+  37   1              TF0 = 0;        // 清除TF0标志
+  38   1      
+  39   1              ET0 = 1;
+  40   1      
+  41   1              TR0 = 1; // 定时器0开始计时
+  42   1      }
+  43          
+  44          void UartInit(void) // 9600bps@12.000MHz
+  45          {
+  46   1              PCON &= 0x7F; // 波特率不倍速
+  47   1              SCON = 0x50;  // 8位数据,可变波特率
+  48   1              AUXR &= 0xBF; // 定时器时钟12T模式
+  49   1              AUXR &= 0xFE; // 串口1选择定时器1为波特率发生器
+  50   1              TMOD &= 0x0F; // 设置定时器模式
+  51   1              TMOD |= 0x20; // 设置定时器模式
+  52   1              TL1 = 0xFD;       // 设置定时初始值
+  53   1              TH1 = 0xFD;       // 设置定时重载值
+C51 COMPILER V9.60.0.0   MAIN                                                              05/14/2023 21:08:25 PAGE 2   
+
+  54   1              ET1 = 0;          // 禁止定时器%d中断
+  55   1              TR1 = 1;          // 定时器1开始计时
+  56   1      
+  57   1              ES = 1;
+  58   1      }
+  59          
+  60          void serviceUART() interrupt 4
+  61          {
+  62   1              // 接收到数据，RI被置1
+  63   1              if (RI == 1)
+  64   1              {
+  65   2                      if (SBUF == 'A')
+  66   2                              stage = GO;
+  67   2                      else if (SBUF == 'S')
+  68   2                              stage = STOP;
+  69   2                      RI = 0; // 软件方法将RI置0
+  70   2              }
+  71   1              // 发送完毕，TI被置1
+  72   1              if (TI == 1)
+  73   1              {
+  74   2                      //......
+  75   2                      TI = 0; // 软件方法将TI置0
+  76   2              }
+  77   1      }
+  78          
+  79          void serviceTimer0() interrupt 1
+  80          {
+  81   1              real_pwm = (real_pwm + 1) % 1000;
+  82   1              if (stage == STOP_W5S)
+  83   1              {
+  84   2                      if (real_pwm == 999)
+  85   2                      {
+  86   3                              real_wtime++;
+  87   3                      }
+  88   2                      if (real_wtime == 5000)
+  89   2                      {
+  90   3                              real_wtime = 0;
+  91   3                              stage++;
+  92   3                      }
+  93   2              }
+  94   1      }
+  95          
+  96          void main()
+  97          {
+  98   1      
+  99   1              UartInit();
+ 100   1              Timer0Init();
+ 101   1      
+ 102   1              EA = 1;
+ 103   1      
+ 104   1              stage = GO;
+ 105   1              
+ 106   1              while (1)
+ 107   1              {
+ 108   2                      channel_sum = (unsigned char)D0 +
+ 109   2                                                (unsigned char)D1 +
+ 110   2                                                (unsigned char)D2 +
+ 111   2                                                (unsigned char)D3 +
+ 112   2                                                (unsigned char)D4 +
+ 113   2                                                (unsigned char)D5;
+ 114   2      
+ 115   2                                                
+C51 COMPILER V9.60.0.0   MAIN                                                              05/14/2023 21:08:25 PAGE 3   
+
+ 116   2                      if (channel_sum > 0)
+ 117   2                      {
+ 118   3                              D0_r = D0;
+ 119   3                              D1_r = D1;
+ 120   3                              D2_r = D2;
+ 121   3                              D3_r = D3;
+ 122   3                              D4_r = D4;
+ 123   3                              D5_r = D5;
+ 124   3                      }
+ 125   2      
+ 126   2                      if (channel_sum > 3)
+ 127   2                      {
+ 128   3                              stage++;
+ 129   3                              continue;
+ 130   3                      }
+ 131   2      
+ 132   2                      if (stage == STOP || stage == STOP_W5S)
+ 133   2                      {
+ 134   3                              left_side(120);
+ 135   3                              right_side(120);
+ 136   3                              continue;
+ 137   3                      }
+ 138   2      
+ 139   2                      if (D0_r == 1) // 左1压
+ 140   2                      {
+ 141   3                              if (real_pwm > 400)
+ 142   3                              {
+ 143   4                                      right_side(1);
+ 144   4                                      left_side(0);
+ 145   4                              }
+ 146   3                              else
+ 147   3                              {
+ 148   4                                      right_side(120);
+ 149   4                                      left_side(120);
+ 150   4                              }
+ 151   3                              continue;
+ 152   3                      }
+ 153   2      
+ 154   2                      if (D5_r == 1) // 右1压
+ 155   2                      {
+ 156   3                              if (real_pwm > 400)
+ 157   3                              {
+ 158   4                                      left_side(1);
+ 159   4                                      right_side(0);
+ 160   4                              }
+ 161   3                              else
+ 162   3                              {
+ 163   4                                      left_side(120);
+ 164   4                                      right_side(120);
+ 165   4                              }
+ 166   3                              continue;
+ 167   3                      }
+ 168   2      
+ 169   2                      if (D4_r == 1) // 右2压
+ 170   2                      {
+ 171   3                              if (real_pwm > 400)
+ 172   3                              {
+ 173   4                                      left_side(1);
+ 174   4                                      right_side(0);
+ 175   4                              }
+ 176   3                              else
+ 177   3                              {
+C51 COMPILER V9.60.0.0   MAIN                                                              05/14/2023 21:08:25 PAGE 4   
+
+ 178   4                                      left_side(120);
+ 179   4                                      right_side(120);
+ 180   4                              }
+ 181   3                              continue;
+ 182   3                      }
+ 183   2      
+ 184   2                      if (D1_r == 1) // 左2压
+ 185   2                      {
+ 186   3                              if (real_pwm > 400)
+ 187   3                              {
+ 188   4                                      right_side(1);
+ 189   4                                      left_side(0);
+ 190   4                              }
+ 191   3                              else
+ 192   3                              {
+ 193   4                                      right_side(120);
+ 194   4                                      left_side(120);
+ 195   4                              }
+ 196   3                              continue;
+ 197   3                      }
+ 198   2      
+ 199   2                      if (D2_r == 1 && D3_r == 1)
+ 200   2                      {
+ 201   3                              if (stage == SLOW)
+ 202   3                              {
+ 203   4                                      if (real_pwm > 100)
+ 204   4                                      {
+ 205   5                                              left_side(1);
+ 206   5                                              right_side(1);
+ 207   5                                      }
+ 208   4                                      else
+ 209   4                                      {
+ 210   5                                              left_side(0);
+ 211   5                                              right_side(0);
+ 212   5                                      }
+ 213   4                              }
+ 214   3                              else
+ 215   3                              {
+ 216   4                                      left_side(1);
+ 217   4                                      right_side(1);
+ 218   4                              }
+ 219   3                              continue;
+ 220   3                      }
+ 221   2      
+ 222   2                      if (D2_r == 1)
+ 223   2                      {
+ 224   3                              if (stage == SLOW)
+ 225   3                              {
+ 226   4                                      if (real_pwm > 100)
+ 227   4                                      {
+ 228   5                                              left_side(1);
+ 229   5                                              right_side(1);
+ 230   5                                      }
+ 231   4                                      else
+ 232   4                                      {
+ 233   5                                              left_side(0);
+ 234   5                                              right_side(0);
+ 235   5                                      }
+ 236   4                              }
+ 237   3                              else
+ 238   3                              {
+ 239   4                                      if (real_pwm > 100)
+C51 COMPILER V9.60.0.0   MAIN                                                              05/14/2023 21:08:25 PAGE 5   
+
+ 240   4                                      {
+ 241   5                                              left_side(1);
+ 242   5                                              right_side(1);
+ 243   5                                      }
+ 244   4                                      else
+ 245   4                                      {
+ 246   5                                              left_side(120);
+ 247   5                                              right_side(1);
+ 248   5                                      }
+ 249   4                              }
+ 250   3                              continue;
+ 251   3                      }
+ 252   2      
+ 253   2                      if (D3_r == 1)
+ 254   2                      {
+ 255   3                              if (stage == SLOW)
+ 256   3                              {
+ 257   4                                      if (real_pwm > 100)
+ 258   4                                      {
+ 259   5                                              left_side(1);
+ 260   5                                              right_side(1);
+ 261   5                                      }
+ 262   4                                      else
+ 263   4                                      {
+ 264   5                                              left_side(0);
+ 265   5                                              right_side(0);
+ 266   5                                      }
+ 267   4                              }
+ 268   3                              else
+ 269   3                              {
+ 270   4                                      if (real_pwm > 100)
+ 271   4                                      {
+ 272   5                                              left_side(1);
+ 273   5                                              right_side(1);
+ 274   5                                      }
+ 275   4                                      else
+ 276   4                                      {
+ 277   5                                              left_side(1);
+ 278   5                                              right_side(120);
+ 279   5                                      }
+ 280   4                              }
+ 281   3                              continue;
+ 282   3                      }
+ 283   2              }
+ 284   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    624    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

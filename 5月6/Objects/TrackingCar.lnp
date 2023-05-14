@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\STARTUP.obj",
+".\Objects\L298N.obj",
+".\Objects\TCRT5000.obj" 
+TO ".\Objects\TrackingCar" 
+PRINT(".\Listings\TrackingCar.m51") RAMSIZE(256) 
