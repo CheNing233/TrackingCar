@@ -1,0 +1,7 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "tcrt5000.h": "c",
+        "main.h": "c"
+    }
+}
