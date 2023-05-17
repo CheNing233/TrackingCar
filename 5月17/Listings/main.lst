@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 16:21:11 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 19:10:49 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -21,188 +21,199 @@ line level    source
    9          
   10          unsigned char stage = ONLY_GO;
   11          unsigned char start_stopline = 0;
-  12          
-  13          void Timer0Init(void)           //1毫秒@11.0592MHz
-  14          {
-  15   1              AUXR &= 0x7F;           //定时器时钟12T模式
-  16   1              TMOD &= 0xF0;           //设置定时器模式
-  17   1              TL0 = 0x66;             //设置定时初始值
-  18   1              TH0 = 0xFC;             //设置定时初始值
-  19   1              TF0 = 0;                //清除TF0标志
-  20   1              
-  21   1              ET0 = 1;
-  22   1      }
-  23          
-  24          unsigned int t0cnt = 0;
-  25          unsigned char t0ok = 0;
-  26          void serviceTimer0() interrupt 1
-  27          {
-  28   1              
-  29   1              if(t0cnt > 0){
-  30   2                      t0cnt--;
-  31   2              }
-  32   1              else{
-  33   2                      t0ok = 1;
-  34   2                      TR0 = 0;
-  35   2              }
-  36   1                      
-  37   1      }
-  38          
-  39          void t0start(unsigned int time){
-  40   1              
-  41   1              t0ok = 0;
-  42   1              t0cnt = time;
-  43   1              TR0 = 1;
-  44   1              
-  45   1      }
-  46          
-  47          
-  48          void main()
-  49          {
-  50   1              
-  51   1              unsigned char real_action;
-  52   1              unsigned char backup_action;
-  53   1              
-C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 16:21:11 PAGE 2   
+  12          unsigned int start_protect = 3000;
+  13          
+  14          
+  15          void Timer0Init(void)           //1毫秒@11.0592MHz
+  16          {
+  17   1              AUXR &= 0x7F;           //定时器时钟12T模式
+  18   1              TMOD &= 0xF0;           //设置定时器模式
+  19   1              TL0 = 0x66;             //设置定时初始值
+  20   1              TH0 = 0xFC;             //设置定时初始值
+  21   1              TF0 = 0;                //清除TF0标志
+  22   1              
+  23   1              ET0 = 1;
+  24   1      }
+  25          
+  26          unsigned int t0cnt = 0;
+  27          unsigned char t0ok = 0;
+  28          void serviceTimer0() interrupt 1
+  29          {
+  30   1              
+  31   1              if(t0cnt > 0){
+  32   2                      t0cnt--;
+  33   2              }
+  34   1              else{
+  35   2                      t0ok = 1;
+  36   2                      TR0 = 0;
+  37   2              }
+  38   1                      
+  39   1      }
+  40          
+  41          void t0start(unsigned int time){
+  42   1              
+  43   1              t0ok = 0;
+  44   1              t0cnt = time;
+  45   1              TR0 = 1;
+  46   1              
+  47   1      }
+  48          
+  49          
+  50          void main()
+  51          {
+  52   1              
+  53   1              unsigned char real_action;
+C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 19:10:49 PAGE 2   
 
-  54   1              unsigned int real_pwm = 0;
-  55   1      
-  56   1              stage = ONLY_GO;
-  57   1              
-  58   1              Timer0Init();
-  59   1              EA = 1;
-  60   1              
-  61   1              t0start(300);
+  54   1              unsigned char backup_action;
+  55   1              
+  56   1              unsigned int real_pwm = 0;
+  57   1      
+  58   1              stage = ONLY_GO;
+  59   1              
+  60   1              Timer0Init();
+  61   1              EA = 1;
   62   1              
   63   1              while (1)
   64   1              {
   65   2                      backup_action = real_action;
   66   2                      
-  67   2                      if(t0ok == 1 && stage == ONLY_GO){
-  68   3                              stage = GO;
+  67   2                      if(stage == ONLY_GO){
+  68   3                              start_protect--;
   69   3                      }
   70   2                      
-  71   2                      real_action = get_action();
-  72   2                      
-  73   2                      real_pwm = (real_pwm + 1) % 100;
+  71   2                      if(!start_protect){
+  72   3                              stage = GO;
+  73   3                      }
   74   2                      
-  75   2                      if (real_action == X){
-  76   3                              
-  77   3                              if (backup_action != X )
-  78   3                                      start_stopline = (start_stopline + 1) % 2;
-  79   3                              
-  80   3                              if (start_stopline == 1 && stage == GO){
-  81   4                                      
-  82   4                                      t0start(20);
-  83   4                                      
-  84   4                                      left_side(1);
-  85   4                                      right_side(1);
-  86   4                                      
-  87   4                                      while(!t0ok);
-  88   4                                      
-  89   4                                      t0start(550);
+  75   2                      real_action = get_action();
+  76   2                      
+  77   2                      real_pwm = (real_pwm + 1) % 100;
+  78   2                      
+  79   2                      if (real_action == X){
+  80   3                              
+  81   3                              if (backup_action != X && stage == GO)
+  82   3                                      start_stopline = (start_stopline + 1) % 2;
+  83   3                              
+  84   3                              if (start_stopline == 1){
+  85   4                                      
+  86   4                                      t0start(20);
+  87   4                                      
+  88   4                                      left_side(1);
+  89   4                                      right_side(1);
   90   4                                      
-  91   4                                      right_side(120);
-  92   4                                      left_side(120);
-  93   4                                      
-  94   4                                      while(!t0ok);
-  95   4                                      
-  96   4                                      stage = GO;
-  97   4                                      continue;
-  98   4                              }
-  99   3                              else{
- 100   4                                      t0start(3);
- 101   4                                      right_side(1);
- 102   4                                      left_side(1);
- 103   4                                      
- 104   4                                      while(!t0ok);
- 105   4                                      continue;
- 106   4                              }
- 107   3                      }
- 108   2                      
- 109   2                      if (real_action == TURN_LEFT)
- 110   2                      {
- 111   3                              
- 112   3                              if(real_pwm > 40)
- 113   3                              {
- 114   4                                      right_side(1);
- 115   4                                      left_side(0);
-C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 16:21:11 PAGE 3   
+  91   4                                      while(!t0ok);
+  92   4                                      
+  93   4                                      t0start(250);
+  94   4                                      
+  95   4                                      right_side(120);
+  96   4                                      left_side(120);
+  97   4                                      
+  98   4                                      while(!t0ok);
+  99   4                                      
+ 100   4                                      stage = GO;
+ 101   4                                      continue;
+ 102   4                              }
+ 103   3                              else{
+ 104   4                                      t0start(3);
+ 105   4                                      right_side(1);
+ 106   4                                      left_side(1);
+ 107   4                                      
+ 108   4                                      while(!t0ok);
+ 109   4                                      continue;
+ 110   4                              }
+ 111   3                      }
+ 112   2                      
+ 113   2                      if (real_action == TURN_LEFT)
+ 114   2                      {
+ 115   3                              
+C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 19:10:49 PAGE 3   
 
- 116   4                              }
- 117   3                              else
- 118   3                              {
- 119   4                                      right_side(120);
- 120   4                                      left_side(120);
- 121   4                              }
- 122   3                              continue;
- 123   3                      }
- 124   2                      
- 125   2                      if (real_action == TURN_RIGHT)
- 126   2                      {
- 127   3                              if(real_pwm > 40)
- 128   3                              {
- 129   4                                      left_side(1);
- 130   4                                      right_side(0);
- 131   4                              }
- 132   3                              else
- 133   3                              {
- 134   4                                      left_side(120);
- 135   4                                      right_side(120);
- 136   4                              }
- 137   3                              continue;
- 138   3                      }
- 139   2                      
- 140   2                      if (real_action == TURN_RIGHT_SMALL)
- 141   2                      {
- 142   3                              
- 143   3                              if(real_pwm > 5)
- 144   3                              {
- 145   4                                      right_side(1);
- 146   4                                      left_side(1);
- 147   4                              }
- 148   3                              else
- 149   3                              {
- 150   4                                      right_side(120);
- 151   4                                      left_side(1);
- 152   4                              }
- 153   3                              continue;
- 154   3                      }
- 155   2                      
- 156   2                      if (real_action == TURN_LEFT_SMALL)
- 157   2                      {
- 158   3                              if(real_pwm > 5)
- 159   3                              {
- 160   4                                      left_side(1);
- 161   4                                      right_side(1);
- 162   4                              }
- 163   3                              else
- 164   3                              {
- 165   4                                      left_side(120);
- 166   4                                      right_side(1);
- 167   4                              }
- 168   3                              continue;
- 169   3                      }
- 170   2                      
- 171   2                      else if (real_action == GO_STR)
- 172   2                      {
- 173   3                              
- 174   3                              left_side(1);
- 175   3                              right_side(1);
- 176   3                              continue;
- 177   3                      }
-C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 16:21:11 PAGE 4   
+ 116   3                              if(real_pwm > 50)
+ 117   3                              {
+ 118   4                                      right_side(1);
+ 119   4                                      left_side(0);
+ 120   4                              }
+ 121   3                              else
+ 122   3                              {
+ 123   4                                      right_side(120);
+ 124   4                                      left_side(120);
+ 125   4                              }
+ 126   3                              continue;
+ 127   3                      }
+ 128   2                      
+ 129   2                      if (real_action == TURN_RIGHT)
+ 130   2                      {
+ 131   3                              if(real_pwm > 50)
+ 132   3                              {
+ 133   4                                      left_side(1);
+ 134   4                                      right_side(0);
+ 135   4                              }
+ 136   3                              else
+ 137   3                              {
+ 138   4                                      left_side(120);
+ 139   4                                      right_side(120);
+ 140   4                              }
+ 141   3                              continue;
+ 142   3                      }
+ 143   2                      
+ 144   2                      if (real_action == TURN_RIGHT_SMALL)
+ 145   2                      {
+ 146   3                              
+ 147   3                              if(real_pwm > 5)
+ 148   3                              {
+ 149   4                                      right_side(1);
+ 150   4                                      left_side(1);
+ 151   4                              }
+ 152   3                              else
+ 153   3                              {
+ 154   4                                      right_side(120);
+ 155   4                                      left_side(1);
+ 156   4                              }
+ 157   3                              continue;
+ 158   3                      }
+ 159   2                      
+ 160   2                      if (real_action == TURN_LEFT_SMALL)
+ 161   2                      {
+ 162   3                              if(real_pwm > 5)
+ 163   3                              {
+ 164   4                                      left_side(1);
+ 165   4                                      right_side(1);
+ 166   4                              }
+ 167   3                              else
+ 168   3                              {
+ 169   4                                      left_side(120);
+ 170   4                                      right_side(1);
+ 171   4                              }
+ 172   3                              continue;
+ 173   3                      }
+ 174   2                      
+ 175   2                      else if (real_action == GO_STR)
+ 176   2                      {
+ 177   3                              if(real_pwm > 30)
+C51 COMPILER V9.60.0.0   MAIN                                                              05/17/2023 19:10:49 PAGE 4   
 
- 178   2              }
- 179   1      }
+ 178   3                              {
+ 179   4                                      left_side(1);
+ 180   4                                      right_side(1);
+ 181   4                              }
+ 182   3                              else
+ 183   3                              {
+ 184   4                                      left_side(120);
+ 185   4                                      right_side(120);
+ 186   4                              }
+ 187   3                              continue;
+ 188   3                      }
+ 189   2              }
+ 190   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    383    ----
+   CODE SIZE        =    404    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      5       4
+   DATA SIZE        =      7       4
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

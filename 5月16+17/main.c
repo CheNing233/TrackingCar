@@ -9,8 +9,7 @@
 
 unsigned char stage = ONLY_GO;
 unsigned char start_stopline = 0;
-unsigned int start_protect = 3000;
-
+unsigned int start_protect = 1000;
 
 void Timer0Init(void)		//1毫秒@11.0592MHz
 {
@@ -78,10 +77,10 @@ void main()
 		
 		if (real_action == X){
 			
-			if (backup_action != X && stage == GO)
+			if (backup_action != X )
 				start_stopline = (start_stopline + 1) % 2;
 			
-			if (start_stopline == 1){
+			if (start_stopline == 1 && stage == GO){
 				
 				t0start(20);
 				
@@ -90,7 +89,7 @@ void main()
 				
 				while(!t0ok);
 				
-				t0start(250);
+				t0start(550);
 				
 				right_side(120);
 				left_side(120);
@@ -144,7 +143,7 @@ void main()
 		if (real_action == TURN_RIGHT_SMALL)
 		{
 			
-			if(real_pwm > 5)
+			if(real_pwm > 20)
 			{
 				right_side(1);
 				left_side(1);
@@ -159,7 +158,7 @@ void main()
 		
 		if (real_action == TURN_LEFT_SMALL)
 		{
-			if(real_pwm > 5)
+			if(real_pwm > 20)
 			{
 				left_side(1);
 				right_side(1);
@@ -174,16 +173,9 @@ void main()
 		
 		else if (real_action == GO_STR)
 		{
-			if(real_pwm > 30)
-			{
-				left_side(1);
-				right_side(1);
-			}
-			else
-			{
-				left_side(120);
-				right_side(120);
-			}
+			
+			left_side(1);
+			right_side(1);
 			continue;
 		}
 	}
